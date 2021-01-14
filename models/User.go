@@ -8,7 +8,7 @@ import (
 
 // User is the private part of a local account.
 type User struct {
-	AccountID         int
+	AccountID         int     `gorm:"primaryKey"`
 	Account           Account `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Email             string
 	EncryptedPassword string

@@ -16,7 +16,10 @@ type Category struct {
 }
 
 func (category *Category) GetDomain() string {
-	return category.Commune.GetDomain()
+	if category.Commune != nil {
+		return category.Commune.GetDomain()
+	}
+	return category.Object.GetDomain()
 }
 
 func (category *Category) GetURI() string {

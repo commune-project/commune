@@ -8,21 +8,32 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// GetRouter returns a configurated mux.Router
 func GetRouter() *mux.Router {
 	r := mux.NewRouter()
-	SetupRouter(r)
+	setupRouter(r)
 	return r
 }
 
-func SetupRouter(router *mux.Router) {
-	router.HandleFunc("/", HomeHandler)
+func setupRouter(router *mux.Router) {
+	router.HandleFunc("/", homeHandler)
+
+	// Users
 	router.HandleFunc("/users/{username}", handlers.ApUserHandler)
 	router.HandleFunc("/users/{username}/outbox", handlers.ApUserOutboxHandler)
+
+	// Communities
+	router.HandleFunc("/communities/{username}", handlers.ApCommunityHandler)
+	router.HandleFunc("/communities/{username}/outbox", handlers.ApCommunityOutboxHandler)
+
+	// Posts
 	router.HandleFunc("/p/{id:[0-9]+}", handlers.ApPostHandler)
 	router.HandleFunc("/p/{id:[0-9]+}/activity", handlers.ApPostActivityHandler)
+	router.HandleFunc("/users/{username}/statuses/{id:[0-9]+}", handlers.ApPostHandler)
+	router.HandleFunc("/users/{username}/statuses/{id:[0-9]+}/activity", handlers.ApPostActivityHandler)
 }
 
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
+func homeHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "Category: qunimade\n")
 }

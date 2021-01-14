@@ -15,19 +15,26 @@ import (
 
 func main() {
 	fmt.Printf("Saluton mondo.\n")
-	db.DB.AutoMigrate(&models.Account{}, &models.User{}, &models.CommuneMember{}, &models.Category{}, &models.Commune{}, &models.Post{})
+	db.DB.AutoMigrate(&models.Account{}, &models.User{}, &models.CommuneMember{}, &models.LocalCommune{}, &models.Category{}, &models.Commune{}, &models.Post{})
 
 	fmt.Println("???")
 	db.DB.Exec("DELETE FROM posts")
 	db.DB.Exec("DELETE FROM users")
+	db.DB.Exec("DELETE FROM commune_members")
 	db.DB.Exec("DELETE FROM accounts")
+	db.DB.Exec("DELETE FROM categories")
+	db.DB.Exec("DELETE FROM communes")
 	user, err := models.NewUser("misaka4e22", "m.hitorino.moe", "misaka4e21@gmail.com", "123456")
 	if err != nil {
 		panic(err)
 	}
-	db.DB.Create(user)
+	err = db.DB.Create(user).Error
+	if err != nil {
+		panic(err)
+	}
 
-	db.DB.Transaction(func(tx *gorm.DB) error {
+	var defaultCategory *models.Category
+	err = db.DB.Transaction(func(tx *gorm.DB) error {
 		localCommune, _ := models.NewLocalCommune("limelight", "m.hitorino.moe")
 		if err := tx.Create(localCommune).Error; err != nil {
 			return err
@@ -38,16 +45,25 @@ func main() {
 			Account: user.Account,
 			Role:    "creator",
 		}
-		return db.DB.Create(communeMembership).Error
-
+		if err := tx.Create(communeMembership).Error; err != nil {
+			return err
+		}
+		defaultCategory = &models.Category{
+			Commune: &localCommune.Commune,
+			Slug:    "default",
+		}
+		return tx.Create(defaultCategory).Error
 	})
+	if err != nil {
+		panic(err)
+	}
 
 	db.DB.Create(&models.Post{
 		Object: abstract.Object{
 			Type: "Note",
 		},
 		Author:          user.Account,
-		Category:        nil,
+		Category:        defaultCategory,
 		Content:         "什么鬼",
 		MediaType:       "text/plain",
 		Source:          "什么鬼",
