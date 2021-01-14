@@ -91,6 +91,16 @@ func (actor *Actor) GetOutboxURI() string {
 	return actor.GetURI() + "/outbox"
 }
 
+func (actor *Actor) IsLocal(localDomains []string) bool {
+	objDomain := actor.GetDomain()
+	for _, localDomain := range localDomains {
+		if objDomain == localDomain {
+			return true
+		}
+	}
+	return false
+}
+
 func (actor *Actor) IsBot() bool {
 	return actor.Type == "Service"
 }

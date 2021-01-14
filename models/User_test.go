@@ -7,7 +7,7 @@ import (
 )
 
 func Test_NewUser(t *testing.T) {
-	if user, err := models.NewUser("misaka4e21", "m.hitorino.moe", "misaka4e21@rbq.press", "123456"); err != nil {
+	if user, err := models.NewUser("misaka4e21", "m.hitorino.moe", "misaka4e21@rbq.press", "123456"); (err != nil) || (user == nil) {
 		t.Error(err)
 	} else {
 		if uri := user.Account.GetURI(); uri != "https://m.hitorino.moe/users/misaka4e21" {
@@ -28,7 +28,6 @@ func Test_NewUser(t *testing.T) {
 		if uri := user.Account.GetFollowingURI(); uri != "https://m.hitorino.moe/users/misaka4e21/following" {
 			t.Error("user.Account.GetFollowingURI() wrong: " + uri)
 		}
-		t.Log("All URIs were tested.")
 		if !user.Account.IsLocal([]string{"m.hitorino.moe"}) {
 			t.Error("Local user determined as remote.")
 		}

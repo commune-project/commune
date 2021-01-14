@@ -1,10 +1,10 @@
 package abstract
 
 import (
-	"fmt"
 	"net/url"
 	"time"
 
+	"github.com/commune-project/commune/interfaces"
 	"gorm.io/gorm"
 )
 
@@ -34,7 +34,6 @@ func (obj *Object) GetDomain() string {
 }
 
 func (obj *Object) GetURI() string {
-	fmt.Println("superclass called!")
 	if obj.URI == nil {
 		return ""
 	}
@@ -49,7 +48,8 @@ func (obj *Object) GetURL() string {
 }
 
 func (obj *Object) IsLocal(localDomains []string) bool {
-	objDomain := obj.GetDomain()
+	var iobj interfaces.IObject = obj
+	objDomain := iobj.GetDomain()
 	for _, localDomain := range localDomains {
 		if objDomain == localDomain {
 			return true
