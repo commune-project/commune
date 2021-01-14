@@ -14,6 +14,8 @@ type User struct {
 	EncryptedPassword string
 	PrivateKey        string
 	IsVerified        bool
+	IsAdmin           bool
+	IsModerator       bool
 }
 
 // NewUser creates a new User struct without insert it into database.
@@ -44,5 +46,7 @@ func NewUser(username string, domain string, email string, password string) (use
 		Email:             email,
 		EncryptedPassword: string(encryptedPassword),
 		IsVerified:        false,
+		IsAdmin:           false,
+		IsModerator:       false,
 	}, nil
 }
