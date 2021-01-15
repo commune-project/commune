@@ -8,6 +8,7 @@ go run main.go migrate up
 go test github.com/commune-project/commune/models || exit $?
 go test github.com/commune-project/commune/db/dbmanagers || exit $?
 go test github.com/commune-project/commune/ap/asgenerator || exit $?
+go test github.com/commune-project/commune/ap/inbox || exit $?
 
 echo "All tests are passed!"
 
