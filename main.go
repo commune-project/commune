@@ -9,6 +9,7 @@ import (
 
 	"github.com/commune-project/commune/cli/communectl"
 	"github.com/commune-project/commune/db"
+	"github.com/commune-project/commune/models"
 	"github.com/commune-project/commune/router"
 )
 
@@ -18,8 +19,7 @@ func main() {
 		return
 	}
 	fmt.Printf("Saluton mondo.\n")
-	// models.DropTables(db.DB)
-	// models.Migrate(db.DB)
+	models.DeleteFromTables(db.DB)
 	db.Seeding()
 
 	srv := &http.Server{

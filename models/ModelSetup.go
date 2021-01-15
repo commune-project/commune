@@ -13,8 +13,8 @@ func Migrate(db *gorm.DB) {
 	db.AutoMigrate(&Account{}, &User{}, &CommuneMember{}, &LocalCommune{}, &Category{}, &Commune{}, &Post{})
 }
 
-// DropTables removes all tables in the database!
-func DropTables(db *gorm.DB) {
+// DeleteFromTables removes all contents in the database!
+func DeleteFromTables(db *gorm.DB) {
 	db.Delete(&Account{}, "1=1")
 	db.Delete(&User{}, "1=1")
 	db.Delete(&CommuneMember{}, "1=1")
