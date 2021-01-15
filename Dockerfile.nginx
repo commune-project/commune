@@ -1,0 +1,5 @@
+FROM nginx:alpine
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
+RUN apk add openssl
+RUN openssl req -newkey rsa:2048 -nodes -keyout /etc/nginx/key.pem -x509 -days 365 -out /etc/nginx/cert.pem -subj '/CN=commune1.localdomain'
+COPY nginx.conf /etc/nginx/nginx.conf

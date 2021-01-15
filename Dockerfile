@@ -8,9 +8,11 @@ RUN go env -w GOPROXY=https://goproxy.io,direct
 
 # Copy the entire project and build it
 # This layer is rebuilt when a file changes in the project directory
-RUN go build -o /bin/communed
+RUN go build -o /bin/commune
 
 # This results in a single layer image
 FROM alpine:3.12
-COPY --from=build /bin/communed /bin/communed
-ENTRYPOINT [ "/bin/communed" ]
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
+RUN apk add postgresql-client
+COPY --from=build /bin/commune /bin/commune
+CMD [ "/bin/commune" ]

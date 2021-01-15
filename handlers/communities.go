@@ -16,14 +16,14 @@ func ApCommunityHandler(w http.ResponseWriter, r *http.Request) {
 
 func getCommuneInterface(r *http.Request) (interface{}, error) {
 	vars := mux.Vars(r)
-	return dbmanagers.GetCommuneByUsername(db.DB, vars["username"])
+	return dbmanagers.GetCommuneByUsername(db.DB, vars["username"], r.Host)
 }
 
 // ApCommunityOutboxHandler handles AP requests to /communities/<username>/outbox
 func ApCommunityOutboxHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	commune, err := dbmanagers.GetCommuneByUsername(db.DB, vars["username"])
+	commune, err := dbmanagers.GetCommuneByUsername(db.DB, vars["username"], r.Host)
 
 	if (err != nil) || (commune == nil) {
 		writeError(w, err, http.StatusNotFound)

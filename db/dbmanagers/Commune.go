@@ -6,9 +6,9 @@ import (
 )
 
 // GetCommuneByUsername returns the models.Commune named `username`.
-func GetCommuneByUsername(db *gorm.DB, username string) (*models.Commune, error) {
+func GetCommuneByUsername(db *gorm.DB, username string, domain string) (*models.Commune, error) {
 	var commune models.Commune
-	result := db.Where("username = ?", username).First(&commune)
+	result := db.Where("username = ? AND domain = ?", username, domain).First(&commune)
 
 	if result.Error != nil {
 		return nil, result.Error
