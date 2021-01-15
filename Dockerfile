@@ -15,4 +15,5 @@ FROM alpine:3.12
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 RUN apk add postgresql-client
 COPY --from=build /bin/commune /bin/commune
+COPY migrations /migrations
 CMD [ "/bin/commune" ]
