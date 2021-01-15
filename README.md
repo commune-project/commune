@@ -15,8 +15,7 @@ You must prepare a PostgreSQL database for it.
 Copy .env.sample to .env, and configure DATABASE_URL, COMMUNE_LOCAL_DOMAINS and so on.
 
 ```bash
-~/go/bin/godotenv go run cli/communectl/communectl.go migrate
-
+bash main.sh migrate up
 bash main.sh
 ```
 

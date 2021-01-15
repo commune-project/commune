@@ -11,7 +11,6 @@ import (
 // Post is a general posting.
 type Post struct {
 	abstract.Object
-
 	AuthorID        int
 	Author          Account
 	CategoryID      *int

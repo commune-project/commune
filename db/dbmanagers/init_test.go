@@ -5,15 +5,14 @@ import (
 	"testing"
 
 	"github.com/commune-project/commune/db"
-	"github.com/commune-project/commune/models"
 )
 
 func init() {
-	models.Migrate(db.DB)
+	db.Seeding()
 }
 
 func deinit() {
-	models.DropTables(db.DB)
+
 }
 
 func TestMain(m *testing.M) {

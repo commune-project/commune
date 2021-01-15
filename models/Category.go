@@ -16,7 +16,9 @@ type Category struct {
 }
 
 func (category *Category) GetDomain() string {
-	if category.Commune != nil {
+	if category == nil {
+		return ""
+	} else if category.Commune != nil {
 		return category.Commune.GetDomain()
 	}
 	return category.Object.GetDomain()

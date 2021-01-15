@@ -2,7 +2,7 @@ FROM golang:1.15-alpine
 
 RUN go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.io,direct
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
-RUN apk add build-base
+RUN apk add build-base postgresql-client
 
 COPY . /app
 WORKDIR /app

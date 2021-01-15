@@ -8,6 +8,12 @@ import (
 	"gorm.io/gorm"
 )
 
+// GetPostByID returns a certain post
+func GetPostByID(db *gorm.DB, id int64) (post models.Post, err error) {
+	err = db.Model(&models.Post{}).Joins("Author").Joins("Category").Preload("Category.Commune").First(&post, id).Error
+	return
+}
+
 // GetPostsOfAccount returns all posts of the given Account
 func GetPostsOfAccount(db *gorm.DB, account models.Account) ([]models.Post, error) {
 	var posts []models.Post

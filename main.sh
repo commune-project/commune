@@ -1,2 +1,2 @@
 #!/bin/bash
-~/go/bin/godotenv go run main.go
+~/go/bin/godotenv go run main.go "$@"

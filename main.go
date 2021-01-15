@@ -4,14 +4,20 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
+	"github.com/commune-project/commune/cli/communectl"
 	"github.com/commune-project/commune/db"
 	"github.com/commune-project/commune/models"
 	"github.com/commune-project/commune/router"
 )
 
 func main() {
+	if len(os.Args) > 1 {
+		communectl.Communectl()
+		return
+	}
 	fmt.Printf("Saluton mondo.\n")
 	models.DropTables(db.DB)
 	models.Migrate(db.DB)

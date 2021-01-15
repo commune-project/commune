@@ -7,6 +7,7 @@ import (
 
 	"github.com/commune-project/commune/ap/asgenerator"
 	"github.com/commune-project/commune/db"
+	"github.com/commune-project/commune/db/dbmanagers"
 	"github.com/commune-project/commune/models"
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
@@ -35,9 +36,9 @@ func getPost(r *http.Request) (interface{}, error) {
 		return nil, err
 	}
 
-	result := db.DB.Model(&models.Post{}).Joins("Author").Joins("Category").First(&post, id)
-	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		return nil, result.Error
+	post, err = dbmanagers.GetPostByID(db.DB, int64(id))
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, err
 	}
 
 	if vars["username"] != "" {
