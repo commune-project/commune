@@ -2,6 +2,7 @@ package fetchers
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/url"
 
@@ -9,16 +10,24 @@ import (
 	"github.com/commune-project/commune/db"
 	"github.com/commune-project/commune/db/dbmanagers"
 	"github.com/commune-project/commune/interfaces"
+	"github.com/commune-project/commune/utils"
 )
 
-// FetchActorByURI gets a remote Account if uri is not found in the database.
-func FetchActorByURI(context db.SiteContext, uri string) (interfaces.IActor, error) {
+// ErrIsLocal describes that the uri is local.
+var ErrIsLocal = errors.New("is local")
+
+// GetOrFetchActorByURI gets a remote Account if uri is not found in the database.
+func GetOrFetchActorByURI(context db.SiteContext, uri string) (interfaces.IActor, error) {
 	account, err := dbmanagers.GetActorByURI(context, uri)
 	// Already have the Account.
 	if err == nil && account != nil {
 		return account, nil
 	}
+	return FetchActorByURI(context, uri)
+}
 
+// FetchActorByURI gets a remote Account.
+func FetchActorByURI(context db.SiteContext, uri string) (interfaces.IActor, error) {
 	var domain string
 
 	webfinger, err := QueryWebFinger(uri)
@@ -30,6 +39,10 @@ func FetchActorByURI(context db.SiteContext, uri string) (interfaces.IActor, err
 		domain = u.Host
 	} else {
 		domain = webfinger.Domain
+	}
+
+	if utils.ContainsString(context.Settings.LocalDomains, domain) {
+		return nil, ErrIsLocal
 	}
 
 	bytes, err := fetchIActorBytes(uri)

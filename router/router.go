@@ -8,6 +8,7 @@ import (
 	"github.com/commune-project/commune/db"
 	"github.com/commune-project/commune/handlers"
 	"github.com/commune-project/commune/handlers/middleware"
+	"github.com/commune-project/commune/webfinger"
 	"github.com/gorilla/mux"
 )
 
@@ -20,6 +21,7 @@ func GetRouter() *mux.Router {
 
 func setupRouter(router *mux.Router) {
 	router.HandleFunc("/", homeHandler)
+	router.HandleFunc("/.well-known/webfinger", webfinger.Handler)
 	apSubRouter := router.PathPrefix("/").Subrouter()
 
 	// Users

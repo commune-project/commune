@@ -45,10 +45,12 @@ func (actor *Actor) GetURI() string {
 
 func (actor *Actor) GetURL() string {
 	if actor.URL == "" {
-		return fmt.Sprintf("https://%s/@%s", actor.Domain, actor.Username)
-	} else {
-		return actor.URL
+		if actor.URI == nil {
+			return fmt.Sprintf("https://%s/@%s", actor.Domain, actor.Username)
+		}
+		return *actor.URI
 	}
+	return actor.URL
 }
 
 func (actor *Actor) GetUsername() string {
