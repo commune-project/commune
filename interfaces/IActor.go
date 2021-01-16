@@ -12,3 +12,6 @@ type IActor interface {
 	IsBot() bool
 	IsCommune() bool
 }
+
+var UserTypes []string = []string{"Person", "Service"}
+var ActorTypes []string = []string{"Person", "Service", "Application", "Group"}

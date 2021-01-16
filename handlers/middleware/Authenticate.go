@@ -20,7 +20,7 @@ var errNotLoggedIn = errors.New("not logged in")
 
 type accountContext struct {
 	context.Context
-	account *models.Account
+	account *models.Actor
 }
 
 func (ctx accountContext) Value(key interface{}) interface{} {
@@ -32,7 +32,7 @@ func (ctx accountContext) Value(key interface{}) interface{} {
 }
 
 // SetAccount stores an Account pointer into http.Request.Context.
-func SetAccount(r *http.Request, account *models.Account) *http.Request {
+func SetAccount(r *http.Request, account *models.Actor) *http.Request {
 	return r.WithContext(accountContext{
 		Context: r.Context(),
 		account: account,
@@ -40,8 +40,8 @@ func SetAccount(r *http.Request, account *models.Account) *http.Request {
 }
 
 // GetAccount retrieves the Account pointer from http.Request.Context.
-func GetAccount(r *http.Request) *models.Account {
-	if account, ok := r.Context().Value("account").(*models.Account); ok {
+func GetAccount(r *http.Request) *models.Actor {
+	if account, ok := r.Context().Value("account").(*models.Actor); ok {
 		return account
 	}
 	return nil
@@ -61,11 +61,11 @@ func Authenticate(logger *log.Logger, siteContext db.SiteContext) Adapter {
 	}
 }
 
-func authSession(context db.SiteContext, r *http.Request) (*models.Account, error) {
+func authSession(context db.SiteContext, r *http.Request) (*models.Actor, error) {
 	session, _ := context.Store.Get(r, "session")
-	accountID, _ := session.Values["account-id"]
-	if accountID, ok := accountID.(int64); ok {
-		var account models.Account
+	actorID, _ := session.Values["user-id"]
+	if accountID, ok := actorID.(int64); ok {
+		var account models.Actor
 		if err := context.DB.Preload("User").First(&account, accountID).Error; err != nil {
 			return nil, err
 		}
@@ -77,25 +77,25 @@ func authSession(context db.SiteContext, r *http.Request) (*models.Account, erro
 	return nil, errNotLoggedIn
 }
 
-func authHTTPSSignatures(context db.SiteContext, r *http.Request) (*models.Account, error) {
+func authHTTPSSignatures(context db.SiteContext, r *http.Request) (*models.Actor, error) {
 	verifier, err := httpsig.NewVerifier(r)
 	if err != nil {
 		return nil, err
 	}
 	pubKeyID := verifier.KeyId()
 	actorID := strings.ReplaceAll(pubKeyID, "#main-actor", "")
-	account, err := dbmanagers.GetAccountByURI(db.Context, actorID)
+	actor, err := dbmanagers.GetActorByURI(db.Context, actorID)
 	if err != nil {
 		return nil, err
 	}
-	if account.IsLocal(context.Settings.LocalDomains) {
-		return account, errIsLocal
+	if actor.IsLocal(context.Settings.LocalDomains) {
+		return actor, errIsLocal
 	}
 	var algo httpsig.Algorithm = httpsig.Algorithm(httpsig.DigestSha256)
-	pubKey, err := utils.ParsePublicKey([]byte(account.GetPublicKey()))
+	pubKey, err := utils.ParsePublicKey([]byte(actor.GetPublicKey()))
 	if err != nil {
 		return nil, err
 	}
 	// The verifier will verify the Digest in addition to the HTTP signature
-	return account, verifier.Verify(pubKey, algo)
+	return actor, verifier.Verify(pubKey, algo)
 }

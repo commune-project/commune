@@ -14,10 +14,10 @@ func GetPostByID(db *gorm.DB, id int64) (post models.Post, err error) {
 	return
 }
 
-// GetPostsOfAccount returns all posts of the given Account
-func GetPostsOfAccount(db *gorm.DB, account models.Account) ([]models.Post, error) {
+// GetPostsOfAuthor returns all posts of the given Actor
+func GetPostsOfAuthor(db *gorm.DB, actor models.Actor) ([]models.Post, error) {
 	var posts []models.Post
-	result := db.Where("author_id = ?", account.ID).Preload("Author").Preload("Category").Preload("Category.Commune").Find(&posts)
+	result := db.Where("author_id = ?", actor.ID).Preload("Author").Preload("Category").Preload("Category.Commune").Find(&posts)
 	if result.Error != nil {
 		return []models.Post{}, result.Error
 	}
@@ -25,7 +25,7 @@ func GetPostsOfAccount(db *gorm.DB, account models.Account) ([]models.Post, erro
 }
 
 // GetPostsOfCommune returns all posts of the given Commune
-func GetPostsOfCommune(db *gorm.DB, commune models.Commune) ([]models.Post, error) {
+func GetPostsOfCommune(db *gorm.DB, commune models.Actor) ([]models.Post, error) {
 	var posts []models.Post
 	result := db.Preload("Author").Joins("Category").Preload("Category.Commune").Find(&posts, "\"Category\".\"commune_id\" = ?", commune.ID)
 	if result.Error != nil {
@@ -35,12 +35,21 @@ func GetPostsOfCommune(db *gorm.DB, commune models.Commune) ([]models.Post, erro
 }
 
 // GetPostsOfActor returns all posts of the given Actor
-func GetPostsOfActor(db *gorm.DB, actor interfaces.IActor) ([]models.Post, error) {
-	if account, ok := actor.(*models.Account); ok {
-		return GetPostsOfAccount(db, *account)
-	} else if commune, ok := actor.(*models.Commune); ok {
-		return GetPostsOfCommune(db, *commune)
-	} else {
+func GetPostsOfActor(db *gorm.DB, iActor interfaces.IActor) ([]models.Post, error) {
+	actor, ok := iActor.(*models.Actor)
+	if !ok {
+		return nil, errors.New("??? not models.Actor?")
+	}
+	switch actor.GetType() {
+	case "Group":
+		return GetPostsOfCommune(db, *actor)
+	case "Person":
+		fallthrough
+	case "Application":
+		fallthrough
+	case "Services":
+		return GetPostsOfAuthor(db, *actor)
+	default:
 		return []models.Post{}, errors.New("forbidden")
 	}
 }

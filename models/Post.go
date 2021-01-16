@@ -12,7 +12,7 @@ import (
 type Post struct {
 	abstract.Object
 	AuthorID        int
-	Author          Account
+	Author          Actor
 	CategoryID      *int
 	Category        *Category
 	Content         string
@@ -39,10 +39,10 @@ func (post *Post) GetURI() string {
 }
 
 func (post *Post) GetURL() string {
-	if post.URL == nil {
+	if post.URL == "" {
 		return post.GetURI()
 	}
-	return *post.URL
+	return post.URL
 }
 
 func (post *Post) GetName() string {

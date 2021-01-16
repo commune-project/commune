@@ -13,16 +13,10 @@ import (
 
 // FetchActorByURI gets a remote Account if uri is not found in the database.
 func FetchActorByURI(context db.SiteContext, uri string) (interfaces.IActor, error) {
-	account, err := dbmanagers.GetAccountByURI(context, uri)
+	account, err := dbmanagers.GetActorByURI(context, uri)
 	// Already have the Account.
-	if err == nil {
+	if err == nil && account != nil {
 		return account, nil
-	}
-
-	commune, err := dbmanagers.GetCommuneByURI(context, uri)
-	// Already have the Account.
-	if err == nil {
-		return commune, nil
 	}
 
 	var domain string

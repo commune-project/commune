@@ -9,11 +9,11 @@ import (
 )
 
 func Test_Generate_Actor(t *testing.T) {
-	user, err := models.NewUser("misaka4e22", "m.hitorino.moe", "misaka4e21@gmail.com", "123456")
-	if err != nil {
-		t.Error(err)
+	user := models.NewUser("misaka4e22", "m.hitorino.moe", "misaka4e21@gmail.com", "123456")
+	if user == nil {
+		t.Error("Unable to create user.")
 	}
-	var account interfaces.IActor = &user.Account
+	var account interfaces.IActor = &user.Actor
 	mjson := asgenerator.GenerateAS(account)
 
 	if mjson["preferredUsername"] != "misaka4e22" {

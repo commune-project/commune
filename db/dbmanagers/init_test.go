@@ -9,6 +9,7 @@ import (
 )
 
 func init() {
+	models.DeleteFromTables(db.Context.DB)
 	db.Seeding()
 }
 

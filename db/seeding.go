@@ -29,34 +29,35 @@ func Seeding() {
 		RETURN SUBSTRING(md5(%d::text), 1, 16);
   	END
   	$BODY$`, rand.Int63())).Error; err != nil {
-		fmt.Println(err)
-	}
-	user, err := models.NewUser("misaka4e22", "commune1.localdomain", "misaka4e21@gmail.com", "123456")
-	if err != nil {
 		panic(err)
 	}
-	err = DB().Create(user).Error
+	user := models.NewUser("misaka4e22", "commune1.localdomain", "misaka4e21@gmail.com", "123456")
+	if user == nil {
+		panic("unable to create user.")
+	}
+	err := DB().Create(user).Error
 	if err != nil {
 		panic(err)
 	}
 
 	var defaultCategory *models.Category
 	err = DB().Transaction(func(tx *gorm.DB) error {
-		localCommune, _ := models.NewLocalCommune("limelight", "commune1.localdomain")
+		localCommune := models.NewLocalCommune("limelight", "commune1.localdomain", true)
+
 		if err := tx.Create(localCommune).Error; err != nil {
 			return err
 		}
 
-		communeMembership := &models.CommuneMember{
-			Commune: localCommune.Commune,
-			Account: user.Account,
-			Role:    "creator",
+		communeMembership := &models.Follow{
+			Following: localCommune.Actor,
+			Follower:  user.Actor,
+			Role:      "creator",
 		}
 		if err := tx.Create(communeMembership).Error; err != nil {
 			return err
 		}
 		defaultCategory = &models.Category{
-			Commune: &localCommune.Commune,
+			Commune: &localCommune.Actor,
 			Slug:    "default",
 		}
 		return tx.Create(defaultCategory).Error
@@ -69,7 +70,7 @@ func Seeding() {
 		Object: abstract.Object{
 			Type: "Note",
 		},
-		Author:          user.Account,
+		Author:          user.Actor,
 		Category:        defaultCategory,
 		Content:         "什么鬼",
 		MediaType:       "text/plain",
@@ -82,7 +83,7 @@ func Seeding() {
 		Object: abstract.Object{
 			Type: "Note",
 		},
-		Author:          user.Account,
+		Author:          user.Actor,
 		Content:         "什么鬼",
 		MediaType:       "text/plain",
 		Source:          "什么鬼",

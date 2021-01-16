@@ -27,8 +27,8 @@ func setupRouter(router *mux.Router) {
 	apSubRouter.HandleFunc("/users/{username}/outbox", handlers.ApUserOutboxHandler)
 
 	// Communities
-	apSubRouter.HandleFunc("/communities/{username}", handlers.ApCommunityHandler)
-	apSubRouter.HandleFunc("/communities/{username}/outbox", handlers.ApCommunityOutboxHandler)
+	apSubRouter.HandleFunc("/communities/{username}", handlers.ApUserHandler)
+	apSubRouter.HandleFunc("/communities/{username}/outbox", handlers.ApUserOutboxHandler)
 
 	// Posts
 	apSubRouter.HandleFunc("/p/{id:[0-9]+}", handlers.ApPostHandler)

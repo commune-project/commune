@@ -10,7 +10,7 @@ import (
 type Category struct {
 	abstract.Object
 	CommuneID int
-	Commune   *Commune
+	Commune   *Actor
 	Slug      string
 	Posts     []*Post
 }
@@ -32,8 +32,8 @@ func (category *Category) GetURI() string {
 }
 
 func (category *Category) GetURL() string {
-	if category.URL != nil {
-		return *category.URL
+	if category.URL != "" {
+		return category.URL
 	}
 	return fmt.Sprintf("%s/c/%s", category.Commune.GetURL(), category.Slug)
 }

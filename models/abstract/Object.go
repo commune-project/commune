@@ -20,7 +20,7 @@ type Model struct {
 type Object struct {
 	Model
 	URI  *string `gorm:"unique" json:"id"`
-	URL  *string `json:"url"`
+	URL  string  `json:"url"`
 	Type string  `json:"type"`
 }
 
@@ -34,17 +34,11 @@ func (obj *Object) GetDomain() string {
 }
 
 func (obj *Object) GetURI() string {
-	if obj.URI == nil {
-		return ""
-	}
 	return *obj.URI
 }
 
 func (obj *Object) GetURL() string {
-	if obj.URL == nil {
-		return ""
-	}
-	return *obj.URL
+	return obj.URL
 }
 
 func (obj *Object) IsLocal(localDomains []string) bool {

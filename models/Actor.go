@@ -1,21 +1,28 @@
-package abstract
+package models
 
 import (
 	"fmt"
+
+	"github.com/commune-project/commune/models/abstract"
 )
 
 // Actor is an abstract user either person, bot or a group of people. Don't create table for it.
 type Actor struct {
-	Object
-	Username     string `json:"preferredUsername"`
-	Domain       string `json:"-"`
-	Name         string `json:"name"`
-	Summary      string `json:"summary"`
-	PublicKey    string `json:"-"`
-	FollowersURI string `json:"followers"`
-	FollowingURI string `json:"following"`
-	InboxURI     string `json:"inbox"`
-	OutboxURI    string `json:"outbox"`
+	abstract.Object
+	Username     string   `json:"preferredUsername"`
+	Domain       string   `json:"-"`
+	Name         string   `json:"name"`
+	Summary      string   `json:"summary"`
+	PublicKey    string   `json:"-"`
+	FollowersURI string   `json:"followers"`
+	FollowingURI string   `json:"following"`
+	InboxURI     string   `json:"inbox"`
+	OutboxURI    string   `json:"outbox"`
+	CreatedPosts []Post   `gorm:"foreignKey:AuthorID"`
+	Followers    []*Actor `gorm:"many2many:Follow;joinForeignKey:FollowingID;joinReferences:FollowingID"`
+	Following    []*Actor `gorm:"many2many:Follow;joinForeignKey:FollowerID;joinReferences:FollowerID"`
+	User         *User
+	Categories   []Category `gorm:"foreignKey:CommuneID"`
 }
 
 func (actor *Actor) GetDomain() string {
@@ -37,10 +44,10 @@ func (actor *Actor) GetURI() string {
 }
 
 func (actor *Actor) GetURL() string {
-	if actor.URL == nil {
+	if actor.URL == "" {
 		return fmt.Sprintf("https://%s/@%s", actor.Domain, actor.Username)
 	} else {
-		return *actor.URL
+		return actor.URL
 	}
 }
 

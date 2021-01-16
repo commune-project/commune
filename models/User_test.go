@@ -7,28 +7,28 @@ import (
 )
 
 func Test_NewUser(t *testing.T) {
-	if user, err := models.NewUser("misaka4e21", "m.hitorino.moe", "misaka4e21@rbq.press", "123456"); (err != nil) || (user == nil) {
-		t.Error(err)
+	if user := models.NewUser("misaka4e21", "m.hitorino.moe", "misaka4e21@rbq.press", "123456"); user == nil {
+		t.Error("Unable to create user.")
 	} else {
-		if uri := user.Account.GetURI(); uri != "https://m.hitorino.moe/users/misaka4e21" {
-			t.Error("user.Account.GetURI() wrong: " + uri)
+		if uri := user.Actor.GetURI(); uri != "https://m.hitorino.moe/users/misaka4e21" {
+			t.Error("user.Actor.GetURI() wrong: " + uri)
 		}
-		if url := user.Account.GetURL(); url != "https://m.hitorino.moe/@misaka4e21" {
-			t.Error("user.Account.GetURL() wrong: " + url)
+		if url := user.Actor.GetURL(); url != "https://m.hitorino.moe/@misaka4e21" {
+			t.Error("user.Actor.GetURL() wrong: " + url)
 		}
-		if uri := user.Account.GetInboxURI(); uri != "https://m.hitorino.moe/users/misaka4e21/inbox" {
-			t.Error("user.Account.GetInboxURI() wrong: " + uri)
+		if uri := user.Actor.GetInboxURI(); uri != "https://m.hitorino.moe/users/misaka4e21/inbox" {
+			t.Error("user.Actor.GetInboxURI() wrong: " + uri)
 		}
-		if uri := user.Account.GetOutboxURI(); uri != "https://m.hitorino.moe/users/misaka4e21/outbox" {
-			t.Error("user.Account.GetOutboxURI() wrong: " + uri)
+		if uri := user.Actor.GetOutboxURI(); uri != "https://m.hitorino.moe/users/misaka4e21/outbox" {
+			t.Error("user.Actor.GetOutboxURI() wrong: " + uri)
 		}
-		if uri := user.Account.GetFollowersURI(); uri != "https://m.hitorino.moe/users/misaka4e21/followers" {
-			t.Error("user.Account.GetFollowersURI() wrong: " + uri)
+		if uri := user.Actor.GetFollowersURI(); uri != "https://m.hitorino.moe/users/misaka4e21/followers" {
+			t.Error("user.Actor.GetFollowersURI() wrong: " + uri)
 		}
-		if uri := user.Account.GetFollowingURI(); uri != "https://m.hitorino.moe/users/misaka4e21/following" {
-			t.Error("user.Account.GetFollowingURI() wrong: " + uri)
+		if uri := user.Actor.GetFollowingURI(); uri != "https://m.hitorino.moe/users/misaka4e21/following" {
+			t.Error("user.Actor.GetFollowingURI() wrong: " + uri)
 		}
-		if !user.Account.IsLocal([]string{"m.hitorino.moe"}) {
+		if !user.Actor.IsLocal([]string{"m.hitorino.moe"}) {
 			t.Error("Local user determined as remote.")
 		}
 	}

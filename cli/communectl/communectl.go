@@ -37,7 +37,7 @@ func Communectl() {
 		flag.CommandLine.StringVar(&migrationName, "name", "migration", "Specify migration's name. Default is migration.")
 
 		flag.CommandLine.Parse(os.Args[2:]) // after declaring flags we need to call it
-		err := migrator.GenerateMigrations(migrationName, db.DB(), &models.Account{}, &models.User{}, &models.CommuneMember{}, &models.LocalCommune{}, &models.Category{}, &models.Commune{}, &models.Post{})
+		err := migrator.GenerateMigrations(migrationName, db.DB(), &models.Actor{}, &models.User{}, &models.Follow{}, &models.Category{}, &models.Post{})
 		if err != nil {
 			panic(err.Error())
 		}

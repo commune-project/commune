@@ -65,10 +65,8 @@ func apOutboxHandler(url url.URL, actor interfaces.IActor) map[string]interface{
 
 	if query.Get("page") != "true" {
 		var totalItems int64 = 0
-		if account, ok := actor.(*models.Account); ok {
+		if account, ok := actor.(*models.Actor); ok {
 			totalItems = db.DB().Model(account).Association("Posts").Count()
-		} else if commune, ok := actor.(*models.Commune); ok {
-			totalItems = db.DB().Model(commune).Association("Posts").Count()
 		}
 		mjson["type"] = "OrderedCollection"
 		mjson["totalItems"] = totalItems

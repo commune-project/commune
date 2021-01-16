@@ -10,7 +10,6 @@ import (
 	"github.com/rbcervilla/redisstore/v8"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 // EnvSettings describes settings in the .env
@@ -43,7 +42,7 @@ func openDB() {
 		panic("Please set DATABASE_URL environment var!")
 	}
 	db, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+		//Logger: logger.Default.LogMode(logger.Info),
 	})
 	if err != nil {
 		panic("Failed to init db:" + err.Error())

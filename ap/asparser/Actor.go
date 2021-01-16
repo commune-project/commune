@@ -4,6 +4,7 @@ import (
 	"github.com/commune-project/commune/interfaces"
 	"github.com/commune-project/commune/models"
 	"github.com/commune-project/commune/models/abstract"
+	"github.com/commune-project/commune/utils"
 )
 
 // Actor is an abstract user either person, bot or a group of people. Don't create table for it.
@@ -21,26 +22,22 @@ import (
 // }
 
 func ParseIActorWithDomain(data map[string]interface{}, domain string) interfaces.IActor {
-	actor := ParseIActor(data)
-	if account, ok := actor.(*models.Account); ok {
-		account.Domain = domain
-		return account
-	} else if commune, ok := actor.(*models.Commune); ok {
-		commune.Domain = domain
-		return commune
+	iActor := ParseIActor(data)
+	if actor, ok := iActor.(*models.Actor); ok {
+		actor.Domain = domain
+		return actor
 	}
-	return actor
+	return iActor
 }
 
 func ParseIActor(data map[string]interface{}) interfaces.IActor {
-	if dataType, ok := data["type"].(string); ok && dataType == "Group" {
-		return parseIntoCommune(data)
-	} else {
-		return parseIntoAccount(data)
+	if dataType, ok := data["type"].(string); ok && utils.ContainsString(interfaces.ActorTypes, dataType) {
+		return parseIntoActor(data)
 	}
+	return nil
 }
 
-func parseIntoAccount(data map[string]interface{}) interfaces.IActor {
+func parseIntoActor(data map[string]interface{}) interfaces.IActor {
 	dataURI, _ := data["id"].(string)
 	dataURL, _ := data["url"].(string)
 	dataType, _ := data["type"].(string)
@@ -54,53 +51,19 @@ func parseIntoAccount(data map[string]interface{}) interfaces.IActor {
 	dataInbox, _ := data["inbox"].(string)
 	dataOutbox, _ := data["outbox"].(string)
 
-	return &models.Account{
-		Actor: abstract.Actor{
-			Object: abstract.Object{
-				Type: dataType,
-				URI:  &dataURI,
-				URL:  &dataURL,
-			},
-			Username:     dataPreferredUsername,
-			Name:         dataName,
-			Summary:      dataSummary,
-			PublicKey:    dataPublicKeyPEM,
-			FollowersURI: dataFollowers,
-			FollowingURI: dataFollowing,
-			InboxURI:     dataInbox,
-			OutboxURI:    dataOutbox,
+	return &models.Actor{
+		Object: abstract.Object{
+			Type: dataType,
+			URI:  &dataURI,
+			URL:  dataURL,
 		},
-	}
-}
-
-func parseIntoCommune(data map[string]interface{}) interfaces.IActor {
-	dataURI, _ := data["id"].(string)
-	dataURL, _ := data["url"].(string)
-	dataPreferredUsername, _ := data["preferredUsername"].(string)
-	dataName, _ := data["name"].(string)
-	dataSummary, _ := data["summary"].(string)
-	dataPublicKey, _ := data["publicKey"].(map[string]string)
-	dataPublicKeyPEM, _ := dataPublicKey["publicKeyPem"]
-	dataFollowers, _ := data["followers"].(string)
-	dataFollowing, _ := data["following"].(string)
-	dataInbox, _ := data["inbox"].(string)
-	dataOutbox, _ := data["outbox"].(string)
-
-	return &models.Commune{
-		Actor: abstract.Actor{
-			Object: abstract.Object{
-				Type: "Group",
-				URI:  &dataURI,
-				URL:  &dataURL,
-			},
-			Username:     dataPreferredUsername,
-			Name:         dataName,
-			Summary:      dataSummary,
-			PublicKey:    dataPublicKeyPEM,
-			FollowersURI: dataFollowers,
-			FollowingURI: dataFollowing,
-			InboxURI:     dataInbox,
-			OutboxURI:    dataOutbox,
-		},
+		Username:     dataPreferredUsername,
+		Name:         dataName,
+		Summary:      dataSummary,
+		PublicKey:    dataPublicKeyPEM,
+		FollowersURI: dataFollowers,
+		FollowingURI: dataFollowing,
+		InboxURI:     dataInbox,
+		OutboxURI:    dataOutbox,
 	}
 }
