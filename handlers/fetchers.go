@@ -46,7 +46,7 @@ func apHandler(w http.ResponseWriter, r *http.Request, fetcher fetcher, mapper m
 	if err != nil {
 		writeError(w, err, http.StatusInternalServerError)
 	} else {
-		w.Header().Add("Content-Type", "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\"")
+		w.Header().Add("Content-Type", "application/activity+json")
 		w.WriteHeader(http.StatusOK)
 		w.Write(b)
 	}
@@ -66,16 +66,16 @@ func apOutboxHandler(url url.URL, actor interfaces.IActor) map[string]interface{
 	if query.Get("page") != "true" {
 		var totalItems int64 = 0
 		if account, ok := actor.(*models.Account); ok {
-			totalItems = db.DB.Model(account).Association("Posts").Count()
+			totalItems = db.DB().Model(account).Association("Posts").Count()
 		} else if commune, ok := actor.(*models.Commune); ok {
-			totalItems = db.DB.Model(commune).Association("Posts").Count()
+			totalItems = db.DB().Model(commune).Association("Posts").Count()
 		}
 		mjson["type"] = "OrderedCollection"
 		mjson["totalItems"] = totalItems
 		mjson["first"] = actor.GetOutboxURI() + "?page=true"
 		mjson["last"] = actor.GetOutboxURI() + "?min_id=0&page=true"
 	} else {
-		posts, _ := dbmanagers.GetPostsOfActor(db.DB.Scopes(utils.Paginate(query.Get("min_id"), query.Get("max_id"))).Order("id desc"), actor)
+		posts, _ := dbmanagers.GetPostsOfActor(db.DB().Scopes(utils.Paginate(query.Get("min_id"), query.Get("max_id"))).Order("id desc"), actor)
 		mjson["type"] = "OrderedCollectionPage"
 		mjson["partOf"] = actor.GetOutboxURI()
 		if len(posts) > 0 {

@@ -10,3 +10,13 @@ func ConcatMaps(maps []map[string]interface{}) map[string]interface{} {
 	}
 	return result
 }
+
+// Contains detects if e is in slice s
+func Contains(s []interface{}, e interface{}) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}

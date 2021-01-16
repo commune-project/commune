@@ -1,10 +1,12 @@
 package utils
 
 import (
+	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"errors"
 )
 
 const keyBitSize = 2048
@@ -29,4 +31,13 @@ func GenerateRsaKeys() (pubPEM []byte, privPEM []byte) {
 			Type:  "RSA PRIVATE KEY",
 		})
 	return pubBytes, privBytes
+}
+
+// ParsePublicKey converts PEM into crypto.PublicKey
+func ParsePublicKey(pubPEM []byte) (crypto.PublicKey, error) {
+	p, _ := pem.Decode(pubPEM)
+	if p != nil {
+		return nil, errors.New("unable to decode key")
+	}
+	return x509.ParsePKCS1PublicKey(p.Bytes)
 }

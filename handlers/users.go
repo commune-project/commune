@@ -16,14 +16,14 @@ func ApUserHandler(w http.ResponseWriter, r *http.Request) {
 
 func getAccountInterface(r *http.Request) (interface{}, error) {
 	vars := mux.Vars(r)
-	return dbmanagers.GetAccountByUsername(db.DB, vars["username"], r.Host)
+	return dbmanagers.GetAccountByUsername(db.DB(), vars["username"], r.Host)
 }
 
 // ApUserOutboxHandler handles AP requests to /users/<username>/outbox
 func ApUserOutboxHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	account, err := dbmanagers.GetAccountByUsername(db.DB, vars["username"], r.Host)
+	account, err := dbmanagers.GetAccountByUsername(db.DB(), vars["username"], r.Host)
 
 	if (err != nil) || (account == nil) {
 		writeError(w, err, http.StatusNotFound)
@@ -34,7 +34,7 @@ func ApUserOutboxHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	} else {
-		w.Header().Add("Content-Type", "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\"")
+		w.Header().Add("Content-Type", "application/activity+json")
 		w.WriteHeader(http.StatusOK)
 		w.Write(b)
 	}

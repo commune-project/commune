@@ -8,7 +8,7 @@ import (
 
 var ErrCheckActorDataNoID = errors.New("data no id")
 var ErrCheckActorDataNoActorID = errors.New("data no actor id")
-var ErrCheckActorDataNotSameDomain = errors.New("data no actor id")
+var ErrCheckActorDataNotSameDomain = errors.New("data id and actor id is not on the same domain")
 
 type checkActor struct{}
 

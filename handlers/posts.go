@@ -36,7 +36,7 @@ func getPost(r *http.Request) (interface{}, error) {
 		return nil, err
 	}
 
-	post, err = dbmanagers.GetPostByID(db.DB, int64(id))
+	post, err = dbmanagers.GetPostByID(db.DB(), int64(id))
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}

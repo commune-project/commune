@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/commune-project/commune/db"
+	"github.com/commune-project/commune/models"
 )
 
 func init() {
@@ -12,7 +13,7 @@ func init() {
 }
 
 func deinit() {
-
+	models.DeleteFromTables(db.Context.DB)
 }
 
 func TestMain(m *testing.M) {

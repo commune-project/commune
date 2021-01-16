@@ -23,7 +23,7 @@ func Seeding() {
 			rand.Seed(int64(binary.LittleEndian.Uint64(b[:])))
 		}
 	}
-	if err := DB.Exec(fmt.Sprintf(`CREATE OR REPLACE FUNCTION public.timestamp_id_secure_random_hex() RETURNS text LANGUAGE plpgsql IMMUTABLE PARALLEL SAFE
+	if err := DB().Exec(fmt.Sprintf(`CREATE OR REPLACE FUNCTION public.timestamp_id_secure_random_hex() RETURNS text LANGUAGE plpgsql IMMUTABLE PARALLEL SAFE
 	AS $BODY$
 	BEGIN
 		RETURN SUBSTRING(md5(%d::text), 1, 16);
@@ -35,13 +35,13 @@ func Seeding() {
 	if err != nil {
 		panic(err)
 	}
-	err = DB.Create(user).Error
+	err = DB().Create(user).Error
 	if err != nil {
 		panic(err)
 	}
 
 	var defaultCategory *models.Category
-	err = DB.Transaction(func(tx *gorm.DB) error {
+	err = DB().Transaction(func(tx *gorm.DB) error {
 		localCommune, _ := models.NewLocalCommune("limelight", "commune1.localdomain")
 		if err := tx.Create(localCommune).Error; err != nil {
 			return err
@@ -65,7 +65,7 @@ func Seeding() {
 		panic(err)
 	}
 
-	DB.Create(&models.Post{
+	DB().Create(&models.Post{
 		Object: abstract.Object{
 			Type: "Note",
 		},
@@ -78,7 +78,7 @@ func Seeding() {
 		Name:            "去你妈的鬼神",
 		ReplyTo:         nil,
 	})
-	DB.Create(&models.Post{
+	DB().Create(&models.Post{
 		Object: abstract.Object{
 			Type: "Note",
 		},

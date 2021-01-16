@@ -16,7 +16,7 @@ import (
 )
 
 func migrateSubCmd() {
-	db, err := db.DB.DB()
+	db, err := db.DB().DB()
 	if err != nil {
 		panic(err)
 	}

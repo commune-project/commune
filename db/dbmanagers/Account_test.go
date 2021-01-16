@@ -8,7 +8,7 @@ import (
 )
 
 func Test_GetAccountByUsername(t *testing.T) {
-	account, err := dbmanagers.GetAccountByUsername(db.DB, "misaka4e22", "commune1.localdomain")
+	account, err := dbmanagers.GetAccountByUsername(db.DB(), "misaka4e22", "commune1.localdomain")
 	if err != nil {
 		t.Error(err)
 	}
@@ -18,8 +18,18 @@ func Test_GetAccountByUsername(t *testing.T) {
 }
 
 func Test_GetAccountByUsernameWithDifferentDomain(t *testing.T) {
-	account, err := dbmanagers.GetAccountByUsername(db.DB, "misaka4e22", "not.exist.localdomain")
+	account, err := dbmanagers.GetAccountByUsername(db.DB(), "misaka4e22", "not.exist.localdomain")
 	if err == nil && account != nil {
 		t.Error(account.GetUsername() + "@" + account.GetDomain() + "shouldn't exist")
+	}
+}
+
+func Test_GetAccountByURIWithLocalDomain(t *testing.T) {
+	account, err := dbmanagers.GetAccountByURI(db.Context, "https://commune1.localdomain/users/misaka4e22")
+	if err != nil {
+		t.Error(err)
+	}
+	if account == nil {
+		t.Error("account is nil")
 	}
 }

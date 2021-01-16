@@ -19,7 +19,7 @@ func main() {
 		return
 	}
 	fmt.Printf("Saluton mondo.\n")
-	models.DeleteFromTables(db.DB)
+	models.DeleteFromTables(db.DB())
 	db.Seeding()
 
 	srv := &http.Server{
