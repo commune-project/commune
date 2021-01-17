@@ -21,13 +21,13 @@ func Test_CheckActor(t *testing.T) {
 		"id":    "https://limelight.moe/p/1/activity",
 		"actor": "https://m.hitorino.moe/users/misaka4e22",
 	}
-	if err := inbox.CheckActor().Process(nil, data, nil); err != nil {
+	if err := inbox.CheckActor().Process(nil, data, &inbox.ProcessingInfo{}); err != nil {
 		t.Error(err)
 	}
-	if err := inbox.CheckActor().Process(nil, data2, nil); err != nil {
+	if err := inbox.CheckActor().Process(nil, data2, &inbox.ProcessingInfo{}); err != nil {
 		t.Error(err)
 	}
-	if err := inbox.CheckActor().Process(nil, dataDeny, nil); err == nil {
+	if err := inbox.CheckActor().Process(nil, dataDeny, &inbox.ProcessingInfo{}); err == nil {
 		t.Error(err)
 	}
 }

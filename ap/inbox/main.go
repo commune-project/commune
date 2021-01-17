@@ -2,20 +2,29 @@ package inbox
 
 import (
 	"net/http"
+
+	"github.com/commune-project/commune/models"
 )
 
 // IInboxHandler describes a generic way to convert a JSON map into a database object.
 type IInboxHandler interface {
-	Process(r *http.Request, data map[string]interface{}, object interface{}) error
+	Process(r *http.Request, data map[string]interface{}, processingInfo *ProcessingInfo) error
 }
 
-type inboxHandler struct {
+// ProcessingInfo stores the intermediate information for processing.
+type ProcessingInfo struct {
+	Actor           *models.Actor
+	Post            *models.Post
+	AdditionalPosts []models.Post
+}
+
+type sequenceHandler struct {
 	handlers []IInboxHandler
 }
 
-func (thisHandler inboxHandler) Process(r *http.Request, data map[string]interface{}, object interface{}) error {
+func (thisHandler sequenceHandler) Process(r *http.Request, data map[string]interface{}, processingInfo *ProcessingInfo) error {
 	for _, handler := range thisHandler.handlers {
-		err := handler.Process(r, data, object)
+		err := handler.Process(r, data, processingInfo)
 		if err != nil {
 			return err
 		}

@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"errors"
 	"log"
 	"net/http"
 	"strings"
@@ -13,12 +12,9 @@ import (
 	"github.com/commune-project/commune/interfaces/validators"
 	"github.com/commune-project/commune/models"
 	"github.com/commune-project/commune/utils"
+	"github.com/commune-project/commune/utils/commonerrors"
 	"github.com/go-fed/httpsig"
 )
-
-var errIsLocal = errors.New("is local account")
-var errIsRemote = errors.New("is remote account")
-var errNotLoggedIn = errors.New("not logged in")
 
 type accountContext struct {
 	context.Context
@@ -72,11 +68,11 @@ func authSession(context db.SiteContext, r *http.Request) (*models.Actor, error)
 			return nil, err
 		}
 		if !account.IsLocal(context.Settings.LocalDomains) {
-			return &account, errIsRemote
+			return &account, commonerrors.ErrIsRemote
 		}
 		return &account, nil
 	}
-	return nil, errNotLoggedIn
+	return nil, commonerrors.ErrNotLoggedIn
 }
 
 func authHTTPSSignatures(context db.SiteContext, r *http.Request) (*models.Actor, error) {
@@ -113,7 +109,7 @@ func authHTTPSSignatures(context db.SiteContext, r *http.Request) (*models.Actor
 
 func authHTTPSSignaturesInternal(context db.SiteContext, actor *models.Actor, verifier httpsig.Verifier) error {
 	if actor.IsLocal(context.Settings.LocalDomains) {
-		return errIsLocal
+		return commonerrors.ErrIsLocal
 	}
 	var algo httpsig.Algorithm = httpsig.Algorithm(httpsig.DigestSha256)
 	pubKey, err := utils.ParsePublicKey([]byte(actor.GetPublicKey()))
