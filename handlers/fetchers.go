@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/commune-project/commune/ap"
 	"github.com/commune-project/commune/ap/asgenerator"
 	"github.com/commune-project/commune/db"
 	"github.com/commune-project/commune/db/dbmanagers"
@@ -41,7 +42,7 @@ func apHandler(w http.ResponseWriter, r *http.Request, fetcher fetcher, mapper m
 		return
 	}
 	mjson := mapper(obj)
-	mjson["@context"] = "https://litepub.social/context.jsonld"
+	mjson = ap.SetContext(mjson)
 	b, err := json.Marshal(mjson)
 	if err != nil {
 		writeError(w, err, http.StatusInternalServerError)
@@ -59,8 +60,7 @@ func genericMapper(obj interface{}) map[string]interface{} {
 func apOutboxHandler(url url.URL, actor interfaces.IActor) map[string]interface{} {
 	query := url.Query()
 	mjson := map[string]interface{}{
-		"@context": "https://litepub.social/context.jsonld",
-		"id":       actor.GetOutboxURI() + url.RawQuery,
+		"id": actor.GetOutboxURI() + url.RawQuery,
 	}
 
 	if query.Get("page") != "true" {
@@ -86,5 +86,5 @@ func apOutboxHandler(url url.URL, actor interfaces.IActor) map[string]interface{
 		}
 		mjson["orderedItems"] = orderedItems
 	}
-	return mjson
+	return ap.SetContext(mjson)
 }

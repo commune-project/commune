@@ -20,3 +20,14 @@ func IsLocal(context db.SiteContext, sURI string) bool {
 	}
 	return false
 }
+
+func SetContext(data map[string]interface{}) map[string]interface{} {
+	data["@context"] = []interface{}{
+		"https://www.w3.org/ns/activitystreams",
+		"https://litepub.social/context.jsonld",
+		map[string]string{
+			"@language": "und",
+		},
+	}
+	return data
+}

@@ -31,7 +31,13 @@ func Seeding() {
   	$BODY$`, rand.Int63())).Error; err != nil {
 		panic(err)
 	}
-	user := models.NewUser("misaka4e22", "commune1.localdomain", "misaka4e21@gmail.com", "123456")
+	seed("commune1.localdomain")
+	seed("commune1.misaka4e21.science")
+
+}
+
+func seed(domain string) {
+	user := models.NewUser("misaka4e22", domain, "misaka4e21@"+domain, "123456")
 	if user == nil {
 		panic("unable to create user.")
 	}
@@ -42,7 +48,7 @@ func Seeding() {
 
 	var defaultCategory *models.Category
 	err = DB().Transaction(func(tx *gorm.DB) error {
-		localCommune := models.NewLocalCommune("limelight", "commune1.localdomain", true)
+		localCommune := models.NewLocalCommune("limelight", domain, true)
 
 		if err := tx.Create(localCommune).Error; err != nil {
 			return err
