@@ -5,6 +5,7 @@ import (
 
 	"github.com/commune-project/commune/ap/fetchers"
 	"github.com/commune-project/commune/db"
+	"github.com/commune-project/commune/handlers/middleware"
 	"github.com/commune-project/commune/models"
 	"github.com/commune-project/commune/utils/commonerrors"
 )
@@ -27,7 +28,9 @@ func (auth checkActorAuth) Process(r *http.Request, data map[string]interface{},
 			return err
 		}
 		if actor, ok := iActor.(*models.Actor); ok {
-			processingInfo.Actor = actor
+			if authedActor := middleware.GetAccount(r); authedActor != nil {
+				processingInfo.Actor = actor
+			}
 		}
 	}
 	return commonerrors.ErrNotLoggedIn

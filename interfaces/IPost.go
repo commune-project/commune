@@ -10,3 +10,5 @@ type IPost interface {
 	GetActivityCreate() IObject
 	GetInReplyTo() string
 }
+
+var PostTypes []string = []string{"Note", "Article", "Page"}

@@ -2,7 +2,6 @@ package fetchers
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 	"net/url"
 
@@ -11,10 +10,8 @@ import (
 	"github.com/commune-project/commune/db/dbmanagers"
 	"github.com/commune-project/commune/interfaces"
 	"github.com/commune-project/commune/utils"
+	"github.com/commune-project/commune/utils/commonerrors"
 )
-
-// ErrIsLocal describes that the uri is local.
-var ErrIsLocal = errors.New("is local")
 
 // GetOrFetchActorByURI gets a remote Account if uri is not found in the database.
 func GetOrFetchActorByURI(context db.SiteContext, uri string) (interfaces.IActor, error) {
@@ -42,10 +39,18 @@ func FetchActorByURI(context db.SiteContext, uri string) (interfaces.IActor, err
 	}
 
 	if utils.ContainsString(context.Settings.LocalDomains, domain) {
-		return nil, ErrIsLocal
+		return nil, commonerrors.ErrIsLocal
 	}
 
-	bytes, err := fetchIActorBytes(uri)
+	if typedData, err := fetchJSON(uri); err == nil {
+		return asparser.ParseIActorWithDomain(typedData, domain), nil
+	} else {
+		return nil, err
+	}
+}
+
+func fetchJSON(uri string) (map[string]interface{}, error) {
+	bytes, err := fetchJSONBytes(uri)
 	if err != nil {
 		return nil, err
 	}
@@ -57,13 +62,13 @@ func FetchActorByURI(context db.SiteContext, uri string) (interfaces.IActor, err
 	}
 
 	if typedData, ok := data.(map[string]interface{}); ok {
-		return asparser.ParseIActorWithDomain(typedData, domain), nil
+		return typedData, nil
 	}
 
-	return nil, ErrParsing
+	return nil, commonerrors.ErrFormInvalid
 }
 
-func fetchIActorBytes(uri string) ([]byte, error) {
+func fetchJSONBytes(uri string) ([]byte, error) {
 	req, err := http.NewRequest("GET", uri, nil)
 	if err != nil {
 		return nil, err

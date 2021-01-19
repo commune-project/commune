@@ -4,9 +4,6 @@ import (
 	"github.com/commune-project/commune/webfinger"
 )
 
-// ErrParsing describes that we cannot parse a subject.
-var ErrParsing = webfinger.ErrParsing
-
 // WebFinger combines two types of resources.
 type WebFinger = webfinger.WebFinger
 

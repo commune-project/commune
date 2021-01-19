@@ -2,14 +2,12 @@ package webfinger
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 	"net/url"
 	"strings"
-)
 
-// ErrParsing describes that we cannot parse a subject.
-var ErrParsing = errors.New("error parsing")
+	"github.com/commune-project/commune/utils/commonerrors"
+)
 
 type webFingerAcct struct {
 	Username string
@@ -43,7 +41,7 @@ func parseAcct(subject string) (acct webFingerAcct, err error) {
 			Domain:   pair[1],
 		}
 	} else {
-		err = ErrParsing
+		err = commonerrors.ErrFormInvalid
 	}
 	return
 }

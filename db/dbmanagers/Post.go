@@ -2,14 +2,20 @@ package dbmanagers
 
 import (
 	"errors"
+	"fmt"
+	"net/url"
+	"regexp"
+	"strconv"
 
+	"github.com/commune-project/commune/ap"
+	"github.com/commune-project/commune/db"
 	"github.com/commune-project/commune/interfaces"
 	"github.com/commune-project/commune/models"
 	"gorm.io/gorm"
 )
 
 // GetPostByID returns a certain post
-func GetPostByID(db *gorm.DB, id int64) (post models.Post, err error) {
+func GetPostByID(db *gorm.DB, id int) (post models.Post, err error) {
 	err = db.Model(&models.Post{}).Joins("Author").Joins("Category").Preload("Category.Commune").First(&post, id).Error
 	return
 }
@@ -51,5 +57,45 @@ func GetPostsOfActor(db *gorm.DB, iActor interfaces.IActor) ([]models.Post, erro
 		return GetPostsOfAuthor(db, *actor)
 	default:
 		return []models.Post{}, errors.New("forbidden")
+	}
+}
+
+// GetPostByURI returns the models.Post located at `uri` which is remote.
+func GetPostByURI(context db.SiteContext, uri string) (*models.Post, error) {
+	getLocalIDByURI := func(reStr string) (*models.Post, error) {
+		re, err := regexp.Compile(reStr)
+		if err != nil {
+			return nil, err
+		}
+
+		submatches := re.FindStringSubmatch(uri)
+		if len(submatches) == 2 {
+			if id, err := strconv.Atoi(submatches[1]); err == nil {
+				post, err := GetPostByID(context.DB, id)
+				if err == nil {
+					return &post, nil
+				}
+				return nil, err
+			}
+			return nil, err
+		}
+		return nil, errors.New("not found")
+	}
+	if ap.IsLocal(context, uri) {
+		myURL, err := url.Parse(uri)
+		if err != nil {
+			return nil, err
+		}
+		if postP, err := getLocalIDByURI(fmt.Sprintf(`https://%s/p/([^/]+)`, myURL.Host)); err == nil {
+			return postP, nil
+		} else if postP, err := getLocalIDByURI(fmt.Sprintf(`https://%s/users/[^/]+/statuses/([^/]+)`, myURL.Host)); err == nil {
+			return postP, nil
+		} else {
+			return nil, err
+		}
+	} else {
+		var postP *models.Post
+		err := context.DB.Where("uri = ?", uri).First(postP).Error
+		return postP, err
 	}
 }

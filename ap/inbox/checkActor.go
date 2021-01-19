@@ -33,13 +33,20 @@ func (checkActor) Process(r *http.Request, data map[string]interface{}, processi
 		return commonerrors.ErrFormInvalid
 	}
 
-	if urlID, err := url.Parse(dataURI); err == nil {
-		if urlActorID, err := url.Parse(actorURI); err == nil {
-			if urlActorID.Host == urlID.Host {
-				data["actor"] = actorURI
-				return nil
+	if inSameDomain(dataURI, actorURI) {
+		data["actor"] = actorURI
+		return nil
+	}
+	return commonerrors.ErrCheckActorDataNotSameDomain
+}
+
+func inSameDomain(urlA string, urlB string) bool {
+	if a, err := url.Parse(urlA); err == nil {
+		if b, err := url.Parse(urlB); err == nil {
+			if a.Host == b.Host {
+				return true
 			}
 		}
 	}
-	return commonerrors.ErrCheckActorDataNotSameDomain
+	return false
 }

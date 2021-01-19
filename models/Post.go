@@ -22,6 +22,8 @@ type Post struct {
 	Name            string
 	ReplyToID       *int
 	ReplyTo         *Post
+	BoostToID       *int
+	BoostTo         *Post
 }
 
 func (post *Post) GetDomain() string {
@@ -94,6 +96,9 @@ func (this postActivityCreate) GetURL() string {
 }
 
 func (this postActivityCreate) GetType() string {
+	if this.post.BoostTo != nil {
+		return "Announce"
+	}
 	return "Create"
 }
 
@@ -102,6 +107,12 @@ func (this postActivityCreate) IsLocal(localDomains []string) bool {
 }
 
 func (this postActivityCreate) RestChildren() map[string]interface{} {
+	if this.post.BoostTo != nil {
+		return map[string]interface{}{
+			"actor":  this.post.Author.GetURI(),
+			"object": asgenerator.GenerateAS(this.post.BoostTo),
+		}
+	}
 	return map[string]interface{}{
 		"actor":  this.post.Author.GetURI(),
 		"object": asgenerator.GenerateAS(this.post),

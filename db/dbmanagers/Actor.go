@@ -12,7 +12,7 @@ import (
 )
 
 // GetActorByID returns the models.Actor with `ID`.
-func GetActorByID(db *gorm.DB, ID int64) (*models.Actor, error) {
+func GetActorByID(db *gorm.DB, ID int) (*models.Actor, error) {
 	var actor models.Actor
 	result := db.First(&actor, ID)
 
