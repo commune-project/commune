@@ -4,7 +4,9 @@ Commune is an ActivityPub-enabled forum software in its very very very early sta
 
 DO NOT use it in a production environment, NO function is done.
 
-Dependencies:
+[![CircleCI](https://circleci.com/gh/commune-project/commune.svg?style=svg)](https://circleci.com/gh/commune-project/commune)
+
+# Dependencies
 * Go (tested with go1.15.6 linux/amd64)
 * PostgreSQL (tested with 11.10-1.pgdg100+1)
 
