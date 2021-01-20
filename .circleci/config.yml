@@ -15,6 +15,7 @@ jobs:
       - image: circleci/redis:alpine 
 
     environment:
+      DATABASE_URL: "postgres://postgres:defaultPassword@postgres/commune_go_test"
       COMMUNE_LOCAL_DOMAINS: "commune1.localdomain commune2.localdomain commune3.localdomain commune4.localdomain commune1.misaka4e21.science commune2.misaka4e21.science"
       REDIS_ADDR: "redis:6379"
     #### TEMPLATE_NOTE: go expects specific checkout path representing url
@@ -26,4 +27,4 @@ jobs:
       - checkout
 
       # specify any bash command here prefixed with `run: `
-      - run: bash test_all.sh
+      - run: bash do_all_tests.sh
