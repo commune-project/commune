@@ -12,6 +12,9 @@ import (
 	"gorm.io/gorm"
 )
 
+// DefaultPassword sets the password for testing. DO NOT USE IT IN PRODUCTION!
+const DefaultPassword string = "123456"
+
 // Seeding the database. #TODO
 func Seeding() {
 	{
@@ -37,7 +40,7 @@ func Seeding() {
 }
 
 func seed(domain string) {
-	user := models.NewUser("misaka4e22", domain, "misaka4e21@"+domain, "123456")
+	user := models.NewUser("misaka4e22", domain, "misaka4e21@"+domain, DefaultPassword)
 	if user == nil {
 		panic("unable to create user.")
 	}

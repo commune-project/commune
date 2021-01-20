@@ -12,14 +12,22 @@ import (
 	"github.com/gorilla/mux"
 )
 
+var globalRouter *mux.Router
+
+func init() {
+	globalRouter = mux.NewRouter()
+	setupRouter(globalRouter)
+}
+
 // GetRouter returns a configurated mux.Router
 func GetRouter() *mux.Router {
-	r := mux.NewRouter()
-	setupRouter(r)
-	return r
+	return globalRouter
 }
 
 func setupRouter(router *mux.Router) {
+	router.HandleFunc("/", homeHandler)
+	router.HandleFunc("/api/commune/login", handlers.Login)
+	router.HandleFunc("/api/commune/logout", handlers.Logout)
 	router.HandleFunc("/", homeHandler)
 	router.HandleFunc("/.well-known/webfinger", webfinger.Handler)
 	apSubRouter := router.PathPrefix("/").Subrouter()

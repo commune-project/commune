@@ -91,5 +91,5 @@ func validateActorURLs(actor interfaces.IActor) error {
 
 func isURL(sURL string) bool {
 	_, err := url.Parse(sURL)
-	return err != nil
+	return err == nil
 }

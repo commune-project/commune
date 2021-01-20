@@ -18,13 +18,19 @@ type User struct {
 	IsModerator       bool
 }
 
+// Authenticate uses bcrypt for now.
+func (user *User) Authenticate(password string) error {
+	return bcrypt.CompareHashAndPassword([]byte(user.EncryptedPassword), []byte(password))
+}
+
 // NewUser creates a new User struct without insert it into database.
 func NewUser(username string, domain string, email string, password string) *User {
 	publicKeyPEM, privateKeyPEM := utils.GenerateRsaKeys()
-	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.MinCost)
+	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil
 	}
+
 	return &User{
 		Actor: Actor{
 			Object: abstract.Object{

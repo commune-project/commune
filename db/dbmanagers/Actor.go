@@ -26,7 +26,7 @@ func GetActorByID(db *gorm.DB, ID int) (*models.Actor, error) {
 // GetActorByUsername returns the models.Actor named `username`.
 func GetActorByUsername(db *gorm.DB, username string, domain string) (*models.Actor, error) {
 	var Actor models.Actor
-	result := db.Where("username = ? AND domain = ?", username, domain).First(&Actor)
+	result := db.Where("lower(username) = lower(?) AND lower(domain) = lower(?)", username, domain).First(&Actor)
 
 	if result.Error != nil {
 		return nil, result.Error

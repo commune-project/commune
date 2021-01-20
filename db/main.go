@@ -64,7 +64,7 @@ func openDB() {
 		panic("failed to create redis store: " + err.Error())
 	}
 
-	Context.Store.KeyPrefix("session_")
+	Context.Store.KeyPrefix("commune_session_")
 }
 
 func readSettings() {

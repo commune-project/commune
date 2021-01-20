@@ -7,4 +7,4 @@ RUN apk add build-base postgresql-client
 COPY . /app
 WORKDIR /app
 
-CMD sh test_all.sh
+CMD sh do_all_tests.sh

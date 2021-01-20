@@ -46,6 +46,8 @@ func Communectl() {
 	} else if os.Args[1] == "help" {
 		if len(os.Args) >= 3 {
 			helpSubCmd(os.Args[2])
+		} else {
+			helpSubCmd("")
 		}
 	} else {
 		helpSubCmd("")

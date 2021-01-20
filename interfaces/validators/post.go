@@ -1,6 +1,8 @@
 package validators
 
-import "github.com/commune-project/commune/interfaces"
+import (
+	"github.com/commune-project/commune/interfaces"
+)
 
 // ValidatePost checks a post's properties
 func ValidatePost(post interfaces.IPost) error {

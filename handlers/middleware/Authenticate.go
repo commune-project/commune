@@ -60,9 +60,9 @@ func Authenticate(logger *log.Logger, siteContext db.SiteContext) Adapter {
 }
 
 func authSession(context db.SiteContext, r *http.Request) (*models.Actor, error) {
-	session, _ := context.Store.Get(r, "session")
+	session, _ := context.Store.Get(r, "web")
 	actorID, _ := session.Values["user-id"]
-	if accountID, ok := actorID.(int64); ok {
+	if accountID, ok := actorID.(int); ok {
 		var account models.Actor
 		if err := context.DB.Preload("User").First(&account, accountID).Error; err != nil {
 			return nil, err
