@@ -18,7 +18,7 @@ jobs:
       - image: circleci/redis:alpine 
 
     environment:
-      DATABASE_URL: "postgres://circle-commune@localhost:5432/commune_go_test"
+      DATABASE_URL: "postgres://commune_go_test@localhost:5432/commune_go_test"
       COMMUNE_LOCAL_DOMAINS: "commune1.localdomain commune2.localdomain commune3.localdomain commune4.localdomain commune1.misaka4e21.science commune2.misaka4e21.science"
       REDIS_ADDR: "redis:6379"
     #### TEMPLATE_NOTE: go expects specific checkout path representing url
