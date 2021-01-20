@@ -13,7 +13,7 @@ jobs:
       # documented at https://circleci.com/docs/2.0/circleci-images/
       - image: circleci/postgres:alpine
         environment:
-          POSTGRES_USER: circleci-commune
+          POSTGRES_USER: commune_go_test
           POSTGRES_DB: commune_go_test
       - image: circleci/redis:alpine 
 
